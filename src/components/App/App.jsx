@@ -1,42 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact, deleteContact, changeFilter } from '../contactsSlice/contactsSlice';
 import ContactForm from '../ContactForm/ContactForm';
 import Filter from '../Filter/Filter';
 import ContactList from '../ContactList/ContactList';
 import s from '../App/App.module/App.module.css';
 
 const App = () => {
-  const [contacts, setContacts] = useState([]);
-  const [filter] = useState('');
- 
+  const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector((state) => state.contacts.filter);
 
-  useEffect(() => {
-    const storedContacts = localStorage.getItem('contacts');
-    if (storedContacts) {
-      setContacts(JSON.parse(storedContacts));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const getVisibleContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-    
+  const handleAddContact = (contact) => {
+    dispatch(addContact(contact));
   };
-  
+
+  const handleDeleteContact = (id) => {
+    dispatch(deleteContact(id));
+  };
+
+  const handleChangeFilter = (filterValue) => {
+    dispatch(changeFilter(filterValue));
+  };
+
   return (
     <div className={s.container}>
       <h1 className={s.title}>Phonebook</h1>
-      <ContactForm/>
+      <ContactForm onAddContact={handleAddContact} />
       <h2 className={s.title}>Contacts</h2>
-      <Filter value={filter} />
-      <ContactList
-        contacts={getVisibleContacts()}
-      />
+      <Filter value={filter} onChangeFilter={handleChangeFilter} />
+      <ContactList contacts={contacts} onDeleteContact={handleDeleteContact} />
     </div>
   );
 };
