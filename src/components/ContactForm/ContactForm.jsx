@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../contactsSlice/contactsSlice';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice/contactsSlice';
 import s from './ContactForm.module/ContactForm.module.css';
 import shortid from 'shortid';
 
@@ -8,7 +8,6 @@ const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts.items);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,23 +20,6 @@ const ContactForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
-    if (name === '' || number === '') {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    const isNameExists = contacts.some(contact => contact.name === name);
-    if (isNameExists) {
-      alert(`${name} already in the contact list!`);
-      return;
-    }
-
-    const isNumberExists = contacts.some(contact => contact.number === number);
-    if (isNumberExists) {
-      alert(`${number} already in the contact list!`);
-      return;
-    }
 
     dispatch(addContact({ id: shortid.generate(), name, number }));
     setName('');

@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import contactsReducer from '../contactsSlice/contactsSlice';
+import {validateContactMiddleware} from '../../redux/middlewares/validationMiddleware'
 
 import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -17,9 +18,9 @@ const rootReducer = {
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+    getDefaultMiddleware(
+      {serializableCheck: false,})
+      .concat(validateContactMiddleware),
   devTools: process.env.NODE_ENV === 'development',
 });
 
